@@ -14,18 +14,18 @@ func ErrorCheck(e error) {
 	}
 }
 
-func EmptyRun(argument string) {
-	MakeNote(argument)
-}
-
 func main() {
+	var (
+		listAll string
+	)
+
 	fmt.Println("---------------------------------------")
 	app := cli.NewApp()
 	app.Name = "Note"
 	app.Usage = "A minimal notetaking app from your CLI"
 	app.Version = "0.0.1"
 	app.Action = func(c *cli.Context) error {
-		ListNotes()
+		PrintList(ListNotes_Name())
 		return nil
 	}
 	app.Flags = []cli.Flag{
@@ -43,7 +43,7 @@ func main() {
 			Action: func(c *cli.Context) error {
 				name := c.Args().Get(0)
 				if name != "" {
-					EmptyRun(name)
+					MakeNote(name)
 				} else {
 					fmt.Println("USAGE: note add [name]")
 				}
@@ -67,12 +67,29 @@ func main() {
 			Usage: "List all notes from the database",
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name: "list-all",
+					Name:        "format, f",
+					Usage:       ": all, dir, group",
+					Destination: &listAll,
 				},
+			},
+			Action: func(c *cli.Context) error {
+				if listAll == "" {
+					PrintList(ListNotes_Name())
+				} else if listAll == "all" {
+					fmt.Println("TODO")
+				} else if listAll == "dir" {
+					PrintList(ListNotes_Dir())
+				} else if listAll == "group" {
+					PrintList(ListNotes_Group())
+				} else {
+					cli.ShowCommandHelp(c, "list")
+				}
+				return nil
 			},
 		},
 	}
 
 	err := app.Run(os.Args)
 	ErrorCheck(err)
+	fmt.Println("---------------------------------------")
 }
