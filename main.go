@@ -2,45 +2,24 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
-	"path"
 
-	cli "gopkg.in/urfave/cli.v1"
+	"github.com/urfave/cli"
 )
 
-func check(e error) {
+func ErrorCheck(e error) {
 	if e != nil {
 		log.Fatal(e)
 	}
 }
 
-func DataBase() string {
-	var configDir = path.Join(os.Getenv("HOME"), ".notes")
-	return configDir
-}
-
-func ListNotes() {
-	files, err := ioutil.ReadDir(DataBase())
-	check(err)
-
-	for _, f := range files {
-		fmt.Printf("%v/%v\n", DataBase(), f.Name())
-	}
-}
-
-func MakeNote(name string) {
-	var newfile string = DataBase() + "/" + name + ".md"
-
-	file, err := os.Create(newfile)
-	check(err)
-	defer file.Close()
-
-	fmt.Println(newfile)
+func EmptyRun(argument string) {
+	MakeNote(argument)
 }
 
 func main() {
+	fmt.Println("---------------------------------------")
 	app := cli.NewApp()
 	app.Name = "Note"
 	app.Usage = "A minimal notetaking app from your CLI"
@@ -64,7 +43,9 @@ func main() {
 			Action: func(c *cli.Context) error {
 				name := c.Args().Get(0)
 				if name != "" {
-					MakeNote(name)
+					EmptyRun(name)
+				} else {
+					fmt.Println("USAGE: note add [name]")
 				}
 				return nil
 			},
@@ -93,5 +74,5 @@ func main() {
 	}
 
 	err := app.Run(os.Args)
-	check(err)
+	ErrorCheck(err)
 }
