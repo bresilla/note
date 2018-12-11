@@ -45,7 +45,7 @@ func main() {
 				if name != "" {
 					MakeNote(name)
 				} else {
-					fmt.Println("USAGE: note add [name]")
+					cli.ShowCommandHelp(c, "add")
 				}
 				return nil
 			},
@@ -57,6 +57,15 @@ func main() {
 		{
 			Name:  "delete",
 			Usage: "Delete a note from the database",
+			Action: func(c *cli.Context) error {
+				name := c.Args().Get(0)
+				if name != "" {
+					DeleteNote(name)
+				} else {
+					cli.ShowCommandHelp(c, "delete")
+				}
+				return nil
+			},
 		},
 		{
 			Name:  "show",

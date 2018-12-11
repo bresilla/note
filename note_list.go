@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"path"
 	"regexp"
 	"strings"
@@ -49,4 +51,31 @@ func PrintList(notes []string) {
 	for _, n := range notes {
 		fmt.Println(n)
 	}
+}
+
+func ListDirOnly() []string {
+	files, err := ListFiles(DataBase())
+	ErrorCheck(err)
+	var notePath []string
+	for _, f := range files {
+		if f.IsDir == false {
+			continue
+		}
+		notePath = append(notePath, f.Path)
+	}
+	return notePath
+}
+
+func IsDirEmpty(name string) (bool, error) {
+	f, err := os.Open(name)
+	if err != nil {
+		return false, err
+	}
+	defer f.Close()
+
+	_, err = f.Readdirnames(1) // Or f.Readdir(1)
+	if err == io.EOF {
+		return true, nil
+	}
+	return false, err // Either not empty or error, suits both cases
 }
