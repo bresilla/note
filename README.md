@@ -1,1 +1,1 @@
-# A GO and SQlite CLI note app
+# A SIMPLE NOTETAKING APP WRITTEN IN GO
