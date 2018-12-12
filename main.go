@@ -110,4 +110,9 @@ func main() {
 	err := app.Run(os.Args)
 	ErrorCheck(err)
 	DashBorder()
+	ChangeColorAndStyle(HighLight, Green, None)
+	fmt.Println("TEST")
+	ChangeColorAndStyle(Underline, Red, None)
+	fmt.Println("TEST")
+	ResetColor()
 }
