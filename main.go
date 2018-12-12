@@ -18,8 +18,7 @@ func main() {
 	var (
 		listAll string
 	)
-
-	fmt.Println("---------------------------------------")
+	DashBorder()
 	app := cli.NewApp()
 	app.Name = "Note"
 	app.Usage = "A minimal notetaking app from your CLI"
@@ -34,6 +33,9 @@ func main() {
 		},
 		cli.StringFlag{
 			Name: "path",
+		},
+		cli.StringFlag{
+			Name: "clean",
 		},
 	}
 	app.Commands = []cli.Command{
@@ -96,9 +98,16 @@ func main() {
 				return nil
 			},
 		},
+		{
+			Name:  "test",
+			Usage: "Snippets to test during development",
+			Action: func(c *cli.Context) error {
+				TestSnip()
+				return nil
+			},
+		},
 	}
-
 	err := app.Run(os.Args)
 	ErrorCheck(err)
-	fmt.Println("---------------------------------------")
+	DashBorder()
 }
