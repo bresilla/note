@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"regexp"
@@ -28,10 +27,22 @@ func Tty_Size() (int, int) {
 	return width, heigh
 }
 
-func DashBorder() {
+func DashBorder() string {
 	width, _ := Tty_Size()
+	var toPrint string
 	for n := 1; n <= width; n++ {
-		fmt.Print("-")
+		toPrint = toPrint + "-"
 	}
-	fmt.Println("")
+	return toPrint
+}
+
+func ShowBanner() string {
+	note :=
+		`    _   ______  _________________
+   / | / / __ \/_  __/ ____/ ___/
+  /  |/ / / / / / / / __/  \__ \ 
+ / /|  / /_/ / / / / /___ ___/ / 
+/_/ |_/\____/ /_/ /_____//____/
+`
+	return note
 }

@@ -18,15 +18,10 @@ func main() {
 	var (
 		listAll string
 	)
-	DashBorder()
 	app := cli.NewApp()
 	app.Name = "Note"
 	app.Usage = "A minimal notetaking app from your CLI"
 	app.Version = "0.0.1"
-	app.Action = func(c *cli.Context) error {
-		PrintList(ListNotes_Name())
-		return nil
-	}
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name: "colors",
@@ -37,6 +32,13 @@ func main() {
 		cli.StringFlag{
 			Name: "clean",
 		},
+	}
+	app.Action = func(c *cli.Context) error {
+		Print(HighLight, Red, None, DashBorder())
+		Print(HighLight, Red, None, ShowBanner())
+		PrintList(ListNotes_Name())
+		Print(HighLight, Red, None, DashBorder())
+		return nil
 	}
 	app.Commands = []cli.Command{
 		{
@@ -109,10 +111,4 @@ func main() {
 	}
 	err := app.Run(os.Args)
 	ErrorCheck(err)
-	DashBorder()
-	ChangeColorAndStyle(HighLight, Green, None)
-	fmt.Println("TEST")
-	ChangeColorAndStyle(Underline, Red, None)
-	fmt.Println("TEST")
-	ResetColor()
 }

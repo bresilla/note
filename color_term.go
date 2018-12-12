@@ -2,19 +2,13 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"log"
-	"os"
-	"runtime"
 	"strconv"
-	"strings"
 )
 
 type Color int
 type Style int
 
 const (
-	// No change of color
 	None = Color(iota)
 	Black
 	Red
@@ -35,18 +29,6 @@ const (
 	Invisible = Style(8)
 )
 
-func isDumbTerm() bool {
-	return os.Getenv("TERM") == "dumb"
-}
-
-func resetColor() {
-	if isDumbTerm() {
-		return
-	}
-	fmt.Print("\x1b[0m")
-}
-
-// style Style
 func ansiText2(style Style, fg Color, bg Color) string {
 	if fg == None && bg == None {
 		return ""
@@ -92,58 +74,18 @@ func ansiText(fg Color, fgBright bool, bg Color, bgBright bool) string {
 }
 
 func changeColor(fg Color, fgBright bool, bg Color, bgBright bool) {
-	if isDumbTerm() {
-		return
-	}
 	if fg == None && bg == None {
 		return
 	}
-
 	n, _ := fmt.Print(ansiText(fg, fgBright, bg, bgBright))
 	fmt.Printf("n:%v\n", n)
 }
 
 func changeColorAndStyle(style Style, fg Color, bg Color) {
-	if isDumbTerm() {
-		return
-	}
 	if fg == None && bg == None {
 		return
 	}
-
 	fmt.Print(ansiText2(style, fg, bg))
-}
-
-func LogToFile(spath string, callDep int, ufmt string, args ...interface{}) error {
-	var f interface{}
-	if spath == "" {
-		f = os.Stdout
-		//return fmt.Errorf("spath is nil")
-	} else {
-		var err error
-		f, err = os.OpenFile(spath, os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModePerm)
-		if err != nil {
-			log.Printf("openfile (%v) err:(%v)\n", spath, err)
-			return err
-		}
-		defer f.(*os.File).Close()
-
-	}
-	_, file, line, ok := runtime.Caller(callDep)
-	if !ok {
-		log.Printf("runtime caller not ok:%v\n", ok)
-	}
-	files := strings.Split(file, "/")
-	file = files[len(files)-1]
-	log.SetOutput(f.(io.Writer))
-
-	log.Printf(fmt.Sprintf("[%v:%v] [D] %v", file, line, ufmt), args...)
-	//systemlog.Printf(format, ...)
-	return nil
-}
-
-func ResetColor() {
-	resetColor()
 }
 
 func ChangeColor(fg Color, fgBright bool, bg Color, bgBright bool) {
@@ -158,6 +100,16 @@ func Background(cl Color, bright bool) {
 	ChangeColor(None, false, cl, bright)
 }
 
-func ChangeColorAndStyle(style Style, fg Color, bg Color) {
+func SetStyle(style Style, fg Color, bg Color) {
 	changeColorAndStyle(style, fg, bg)
+}
+
+func ResetStyle() {
+	fmt.Print("\x1b[0m")
+}
+
+func Print(stl Style, fg Color, bg Color, toPrint string) {
+	SetStyle(stl, fg, bg)
+	fmt.Println(toPrint)
+	ResetStyle()
 }
