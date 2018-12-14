@@ -1,7 +1,6 @@
 package note
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -21,6 +20,7 @@ func DataBase() string {
 }
 
 func Run() {
+	DeleteEmptyDir()
 	var (
 		listAll string
 	)
@@ -40,10 +40,7 @@ func Run() {
 		},
 	}
 	app.Action = func(c *cli.Context) error {
-		Print(HighLight, Red, None, DashBorder())
-		Print(HighLight, Red, None, ShowBanner())
-		PrintList(ListNotes_Name())
-		Print(HighLight, Red, None, DashBorder())
+		PrintList(ListNotePaths())
 		return nil
 	}
 	app.Commands = []cli.Command{
@@ -78,10 +75,6 @@ func Run() {
 			},
 		},
 		{
-			Name:  "show",
-			Usage: "Concatenate and show a note",
-		},
-		{
 			Name:  "list",
 			Usage: "List all notes from the database",
 			Flags: []cli.Flag{
@@ -93,13 +86,16 @@ func Run() {
 			},
 			Action: func(c *cli.Context) error {
 				if listAll == "" {
-					PrintList(ListNotes_Name())
+					PrintList(ListNoteNames())
 				} else if listAll == "all" {
-					fmt.Println("TODO")
+					Print(HighLight, Red, None, DashBorder())
+					Print(HighLight, Red, None, ShowBanner())
+					PrintList(ListNoteNames())
+					Print(HighLight, Red, None, DashBorder())
 				} else if listAll == "dir" {
-					PrintList(ListNotes_Dir())
+					PrintList(ListNotePaths())
 				} else if listAll == "group" {
-					PrintList(ListNotes_Group())
+					PrintList(ListNoteGroup())
 				} else {
 					cli.ShowCommandHelp(c, "list")
 				}
@@ -114,6 +110,7 @@ func Run() {
 			},
 		},
 	}
+	DeleteEmptyDir()
 	err := app.Run(os.Args)
 	ErrorCheck(err)
 }

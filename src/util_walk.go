@@ -2,6 +2,8 @@ package note
 
 import (
 	"os"
+	"path"
+	"strings"
 	"time"
 
 	"github.com/karrick/godirwalk"
@@ -12,6 +14,8 @@ var ComputeHashes = true
 
 type File struct {
 	Path    string
+	Name    string
+	Parent  string
 	Size    int64
 	Mode    os.FileMode
 	ModTime time.Time
@@ -27,8 +31,13 @@ func ListFiles(dir string) (files []File, err error) {
 			if err != nil {
 				return
 			}
+			pathremain, name := path.Split(osPathname)
+			pathremain = strings.TrimRight(pathremain, "/")
+			_, parent := path.Split(pathremain)
 			file := File{
 				Path:    osPathname,
+				Name:    name,
+				Parent:  parent,
 				Size:    f.Size(),
 				Mode:    f.Mode(),
 				ModTime: f.ModTime(),
@@ -48,5 +57,20 @@ func ListFiles(dir string) (files []File, err error) {
 		Unsorted:      true,
 		ScratchBuffer: make([]byte, 64*1024),
 	})
+	return
+}
+
+func ListPathsNFiles() (paths []File, files []File) {
+	files = []File{}
+	paths = []File{}
+	list, err := ListFiles(DataBase())
+	ErrorCheck(err)
+	for _, f := range list {
+		if f.IsDir {
+			paths = append(paths, f)
+		} else {
+			files = append(files, f)
+		}
+	}
 	return
 }
