@@ -32,8 +32,10 @@ func DeleteEmptyDir() {
 func DeleteNote(name string) {
 	_, note := FindNote(name)
 	if note != "" {
-		fmt.Printf("Note %q deleted\n", note)
+		fmt.Printf("Note %q deleted.\n", note)
 		os.Remove(note)
+	} else {
+		fmt.Println("That note does not exist!")
 	}
 	DeleteEmptyDir()
 }

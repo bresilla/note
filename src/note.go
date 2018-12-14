@@ -59,7 +59,16 @@ func Run() {
 		},
 		{
 			Name:  "edit",
-			Usage: "Edit an existing notes",
+			Usage: "Edit existing note from database",
+			Action: func(c *cli.Context) error {
+				name := c.Args().Get(0)
+				if name != "" {
+					EditNote(name)
+				} else {
+					cli.ShowCommandHelp(c, "edit")
+				}
+				return nil
+			},
 		},
 		{
 			Name:  "delete",
